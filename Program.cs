@@ -1,5 +1,6 @@
-﻿using System.IO;
+using System.IO;
 using System;
+using System.Linq;
 
 
 namespace Sideloader_Launcher
@@ -9,6 +10,8 @@ namespace Sideloader_Launcher
         static void Main(string[] args)
         {
             string[] files = Directory.GetFiles(Environment.CurrentDirectory);
+            string latestVersionFile = "";
+            int currMaxVersion = 0;
             foreach (string file in files)
             {
                 string fileName = file;
@@ -18,8 +21,17 @@ namespace Sideloader_Launcher
                 }
                 if (fileName.StartsWith("Android") && fileName.EndsWith(".exe") && !fileName.Contains("Launcher"))
                 {
-                    System.Diagnostics.Process.Start(file);
+                    int thisVersion = int.Parse(new String(fileName.Where(Char.IsDigit).ToArray()));
+                    if (thisVersion > currMaxVersion)
+                    {
+                        currMaxVersion = thisVersion;
+                        latestVersionFile = fileName;
+                    }
                 }
+            }
+            if  (!(latestVersionFile == ""))
+            {
+                System.Diagnostics.Process.Start(latestVersionFile);
             }
         }
     }
